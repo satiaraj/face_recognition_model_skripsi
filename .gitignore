@@ -1,0 +1,19 @@
+# Python venv
+venv/
+ENV/
+env/
+
+# Cache & build
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.so
+*.dll
+
+# Model & embeddings besar
+*.pkl
+*.h5
+
+# TensorFlow logs
+logs/
