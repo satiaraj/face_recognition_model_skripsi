@@ -74,11 +74,11 @@ if uploaded_file is not None:
         st.write(f"Akurasi: **{acc:.4f}**")
         
         # Classification report
-        report = classification_report(y_test, y_pred, target_names=encoder.classes_, output_dict=True)
+        report = classification_report(y_test, y_pred, labels=np.arange(len(encoder.classes_)),target_names=encoder.classes_, output_dict=True, zero_division=0)
         st.dataframe(pd.DataFrame(report).transpose())
 
         # Confusion Matrix dengan label nama
-        cm = confusion_matrix(y_test, y_pred)
+        cm = confusion_matrix(y_test, y_pred, labels=np.arange(len(encoder.classes_)))
         cm_df = pd.DataFrame(cm, index=encoder.classes_, columns=encoder.classes_)
         st.write("Confusion Matrix (dengan nama):")
         st.dataframe(cm_df)
