@@ -7,12 +7,13 @@ from sklearn.preprocessing import LabelEncoder
 import pickle
 from keras_facenet import FaceNet
 from mtcnn.mtcnn import MTCNN
+from numpy.linalg import norm
 
 # INITIALIZE FACENET
 facenet = FaceNet()
 
 # Load training embeddings & labels
-faces_embeddings = np.load("faces_embeddings_done_4classes.npz")
+faces_embeddings = np.load("faces_embeddings_done_4classes_tes.npz")
 Y = faces_embeddings['arr_1']
 encoder = LabelEncoder()
 encoder.fit(Y)
@@ -36,41 +37,51 @@ while cap.isOpened():
     rgb_img = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
     gray_img = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
-    # 1️⃣ Deteksi dengan MTCNN
     results = detector_mtcnn.detect_faces(rgb_img)
 
-    # 2️⃣ Fallback ke Haar Cascade jika MTCNN tidak mendeteksi
     if len(results) == 0:
         faces = haarcascade.detectMultiScale(gray_img, 1.3, 5)
         results = [{'box': (x, y, w, h)} for (x, y, w, h) in faces]
 
     for res in results:
         x, y, w, h = res['box']
-
-        # Pastikan koordinat aman
         x, y = max(0, x), max(0, y)
         face_crop = rgb_img[y:y+h, x:x+w]
 
         if face_crop.size == 0:
             continue
 
-        # Resize ke input FaceNet
         img = cv.resize(face_crop, (160, 160))
         img = np.expand_dims(img, axis=0)
 
-        # Embedding & prediksi
-        ypred = facenet.embeddings(img)
-        face_name = model.predict(ypred)
-        final_name = encoder.inverse_transform(face_name)[0]
+        # === 🔹 Bagian modifikasi mulai di sini ===
+        embedding = facenet.embeddings(img)
 
-        # Gambar bounding box + nama
+        pred_class = model.predict(embedding)[0]
+        pred_name = encoder.inverse_transform([pred_class])[0]
+
+# Simpan embeddings training dan labelnya
+        known_embeddings = faces_embeddings['arr_0']  # Nx128
+        known_labels = Y  # label string original
+
+        # Saat prediksi
+        distances = [norm(embedding[0] - e) for e in known_embeddings]
+        min_dist = np.min(distances)
+        best_label = known_labels[np.argmin(distances)]
+
+        if min_dist > 1.0:  # threshold euclidean, coba antara 0.9 - 1.2
+            pred_name = "Unknown"
+        else:
+            pred_name = best_label
+
         cv.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 255), 2)
-        cv.putText(frame, str(final_name), (x, y-10), cv.FONT_HERSHEY_SIMPLEX,
+        cv.putText(frame, str(pred_name), (x, y-10), cv.FONT_HERSHEY_SIMPLEX,
                    1, (0, 0, 255), 2, cv.LINE_AA)
 
-    cv.imshow("Face Recognition (Hybrid)", frame)
-    if cv.waitKey(1) & 0xFF == 27:  # ESC
+    cv.imshow("Face Recognition scanning", frame)
+    if cv.waitKey(1) & 0xFF == 27:
         break
 
 cap.release()
 cv.destroyAllWindows()
+
