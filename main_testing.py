@@ -75,21 +75,22 @@ while cap.isOpened():
         break
 
     rgb = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
-    gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+    # gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
     # detect with MTCNN first
     results = detector_mtcnn.detect_faces(rgb)
 
     # fallback ke haarcascade bila MTCNN tidak menemukan
-    if len(results) == 0 and haarcascade is not None:
-        faces = haarcascade.detectMultiScale(gray, 1.3, 5)
-        results = [{'box': (x, y, w, h)} for (x, y, w, h) in faces]
+    # if len(results) == 0 and haarcascade is not None:
+    #     faces = haarcascade.detectMultiScale(gray, 1.3, 5)
+    #     results = [{'box': (x, y, w, h)} for (x, y, w, h) in faces]
 
     for res in results:
         x, y, w, h = res['box']
         x, y = max(0, x), max(0, y)
         face_crop = rgb[y:y+h, x:x+w]
 
+        print(face_crop.shape)
         if face_crop.size == 0:
             continue
 
