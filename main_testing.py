@@ -8,15 +8,18 @@ from keras_facenet import FaceNet
 from mtcnn.mtcnn import MTCNN
 from numpy.linalg import norm
 from collections import defaultdict
+from deepface import DeepFace
 
 # -------------------------
 # CONFIG
 # -------------------------
+
 EMBEDDING_FILE = "faces_embeddings_done_4classes (3).npz"  # berisi arr_0 (embeddings), arr_1 (labels)
 SVM_MODEL_FILE = "svm_model_160x160.pkl"  # kalau pake SVM (opsional)
 HAAR_FILE = "haarcascade_frontalface_default.xml"
 THRESHOLD = 1.0   # threshold euclidean untuk "Unknown" (coba 0.9 - 1.2)
 VIDEO_DEVICE = 0  # ganti 1 untuk kamera eksternal
+
 # -------------------------
 
 # Inisialisasi FaceNet & detektor

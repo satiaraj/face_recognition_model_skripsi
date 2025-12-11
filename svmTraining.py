@@ -8,6 +8,8 @@ from sklearn.model_selection import GridSearchCV
 import pandas as pd
 import streamlit as st
 
+import seaborn as sns
+import matplotlib.pyplot as plt
 # Judul Aplikasi
 st.title("Analisis Model SVM Face Recognition")
 
@@ -33,10 +35,7 @@ if uploaded_file is not None:
 
     # Menampilkan semua kombinasi parameter yang diuji GridSearch
     st.subheader("📋 Hasil Lengkap Grid Search")
-
     results_df = pd.DataFrame(grid.cv_results_)
-
-    # Ambil kolom penting saja
     cols = [
         'param_C', 'param_gamma', 'param_kernel',
         'split0_test_score', 'split1_test_score', 'split2_test_score',
@@ -46,7 +45,7 @@ if uploaded_file is not None:
     results_df = results_df[cols]
 
     # Urutkan dari kombinasi dengan rata-rata tertinggi
-    results_df = results_df.sort_values(by='mean_test_score', ascending=False)
+    results_df = results_df.sort_values(by='mean_test_score', ascending=True)
 
     st.dataframe(results_df)
     
@@ -75,7 +74,17 @@ if uploaded_file is not None:
         
         # Classification report
         report = classification_report(y_test, y_pred, labels=np.arange(len(encoder.classes_)),target_names=encoder.classes_, output_dict=True, zero_division=0)
-        st.dataframe(pd.DataFrame(report).transpose())
+        report_df = pd.DataFrame(report).transpose()
+        st.dataframe(report_df)
+
+        # Visualisasi Precision, Recall, F1-score, Support
+        metrics_df = report_df.iloc[:-3, :]  # ambil hanya kelas, bukan avg/total
+        fig, ax = plt.subplots(figsize=(10,5))
+        metrics_df[['precision','recall','f1-score']].plot(kind='bar', ax=ax)
+        ax.set_title(f"Precision, Recall, F1-Score per Kelas - Fold {fold_num}")
+        ax.set_ylabel("Score")
+        ax.set_ylim(0, 1.1)
+        st.pyplot(fig)
 
         # Confusion Matrix dengan label nama
         cm = confusion_matrix(y_test, y_pred, labels=np.arange(len(encoder.classes_)))
