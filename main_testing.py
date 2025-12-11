@@ -9,6 +9,9 @@ from mtcnn.mtcnn import MTCNN
 from numpy.linalg import norm
 from collections import defaultdict
 
+# Tambahan Hans Liveness
+import liveness_check as lvns
+
 # -------------------------
 # CONFIG
 # -------------------------
@@ -89,6 +92,12 @@ while cap.isOpened():
 
         if face_crop.size == 0:
             continue
+
+        # TAMBAHAN HANS UNTUK CHECK LIVENESS
+        prob, label = lvns.check_liveness(face_crop)
+        if label == 0:
+            continue
+
 
         # Preprocess face untuk FaceNet
         face_resized = cv.resize(face_crop, (160, 160))
