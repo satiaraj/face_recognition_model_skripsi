@@ -2,6 +2,7 @@
 venv/
 ENV/
 env/
+venv_new/
 
 # Cache & build
 __pycache__/
