@@ -32,9 +32,22 @@ def check_liveness(face):
     img = preprocess_input(img)
     img = tf.expand_dims(img, axis=0)
 
-    pred = model.predict(img)[0][0]
+    pred = model.predict(img)[0][0]   
     label = int(pred > 0.5)
-    print(f"Pred: {pred}, Label: {label}")
 
-    return label
+    return pred, label
+
+
+# def check_liveness(face):
+
+#     img = tf.image.resize(face, IMG_SIZE)
+#     img = tf.cast(img, tf.float32)
+#     img = preprocess_input(img)
+#     img = tf.expand_dims(img, axis=0)
+
+#     pred = model.predict(img)[0][0]
+#     label = int(pred > 0.5)
+#     print(f"Pred: {pred}, Label: {label}")
+
+#     return label
 
