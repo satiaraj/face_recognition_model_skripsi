@@ -95,10 +95,26 @@ while cap.isOpened():
             continue
 
         # TAMBAHAN HANS UNTUK CHECK LIVENESS
+        # ---------------- LIVENESS CHECK ----------------
         bbox = [x, y, w, h]
         is_real = lvns.check_liveness(frame, bbox)
+
         if not is_real:
-            continue
+            cv.rectangle(frame, (x, y), (x+w, y+h), (0, 0, 255), 2)  
+            cv.putText(
+                frame,
+                "SPOOF",
+                (x, y-10),
+                cv.FONT_HERSHEY_SIMPLEX,
+                0.9,
+                (0, 0, 255),
+                2,
+                cv.LINE_AA
+            )
+            continue  
+
+        # ------------------------------------------------
+
 
 
         # Preprocess face untuk FaceNet
