@@ -10,7 +10,7 @@ from numpy.linalg import norm
 from collections import defaultdict
 
 # Tambahan Hans Liveness
-import liveness_check as lvns
+import liveness as lvns
 
 # -------------------------
 # CONFIG
@@ -95,8 +95,9 @@ while cap.isOpened():
             continue
 
         # TAMBAHAN HANS UNTUK CHECK LIVENESS
-        prob, label = lvns.check_liveness(face_crop)
-        if label == 0:
+        bbox = [x, y, w, h]
+        is_real = lvns.check_liveness(frame, bbox)
+        if not is_real:
             continue
 
 
