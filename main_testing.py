@@ -15,7 +15,7 @@ import liveness as lvns
 # -------------------------
 # CONFIG
 # -------------------------
-EMBEDDING_FILE = "faces_embeddings_done_4classes (4).npz"  # berisi arr_0 (embeddings), arr_1 (labels)
+EMBEDDING_FILE = "faces_embeddings_done_4classes.npz"  # berisi arr_0 (embeddings), arr_1 (labels)
 SVM_MODEL_FILE = "svm_model_160x160.pkl"  # kalau pake SVM (opsional)
 HAAR_FILE = "haarcascade_frontalface_default.xml"
 THRESHOLD = 1.0   # threshold euclidean untuk "Unknown" (coba 0.9 - 1.2)
