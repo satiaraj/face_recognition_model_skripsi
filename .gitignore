@@ -15,5 +15,6 @@ __pycache__/
 # Model & embeddings besar
 *.pkl
 
+Dataset
 # TensorFlow logs
 logs/
