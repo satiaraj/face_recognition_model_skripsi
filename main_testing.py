@@ -115,10 +115,8 @@ while cap.isOpened():
 
         # ------------------------------------------------
 
-
-
         # Preprocess face untuk FaceNet
-        face_resized = cv.resize(face_crop, (160, 160))
+        face_resized = cv.resize(face_crop, (150, 150))
         # FaceNet expects shape (1, H, W, C) and type float32; leave value scale as-is (keras-facenet handles)
         inp = face_resized.astype('float32')
         inp = np.expand_dims(inp, axis=0)
